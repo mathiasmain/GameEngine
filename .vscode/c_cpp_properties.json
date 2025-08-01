@@ -1,0 +1,27 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${default}",
+                "D:/Projects/Engine/NXLL/thirdparty/sdl3/include",
+                "D:/Projects/Engine/NXLL/thirdparty/imgui",
+                "D:/Projects/Engine/NXLL/thirdparty/glm",
+                "D:/Programas/Vulkan/Include",
+                "D:/Projects/Engine/PlayGroundBuildSystems/CMAKE/thirdparty/entt315v/single_include",
+                "D:/Projects/Engine/PlayGroundBuildSystems/CMAKE/thirdparty/glfw34v/include",
+                "D:/Projects/Engine/PlayGroundBuildSystems/CMAKE/thirdparty/stbimage"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "windowsSdkVersion": "10.0.22621.0",
+            "compilerPath": "D:/Programas/msys2/ucrt64/bin/g++.exe",
+            "intelliSenseMode": "windows-msvc-x64",
+            "cppStandard": "c++23"
+        }
+    ],
+    "version": 4
+}
