@@ -1,4 +1,4 @@
-# Objective
+# Goal
 For now, I just want to get a basic understanding of the Vulkan API and display something on the screen. It's a work in progress. 
 
 # How to run
