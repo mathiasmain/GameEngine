@@ -83,7 +83,7 @@ VkResult V::CreateLogicalDevice(bool isValidationOn, QueueFamilyIndices *indices
 std::pair<VkResult, uint32_t> V::CreateSwapChain(SwapChainSupportDetails *SC_Support_Details, VkSurfaceFormatKHR surfaceFormat,
                                                  VkExtent2D extent, QueueFamilyIndices *indices)
 {
-    // Seleciona o modo de apresentação
+    // Selects the presentaion mode.
     VkPresentModeKHR presentMode = SC_Support_Details->ChoosePresentMode();
 
     uint32_t imageCount = SC_Support_Details->m_Capabilities.minImageCount + 1;
@@ -285,6 +285,48 @@ std::string V::ErrorOfPhysicalDeviceCreation(const std::vector<const char *> dev
 
     return "";
 }
+// https://vulkan-tutorial.com
+// "An image view is quite literally a view into an image. It describes how to
+// access the image and which part of the image to access, for example if it
+// should be treated as a 2D texture depth texture without any mipmapping levels.
+
+// In this chapter we'll write a createImageViews function that creates a basic
+// image view for every image in the swap chain so that we can use them as color targets later on.""
+
+VkResult V::CreateimageViews()
+{
+    m_SwapChain_Image_Views.resize(m_SwapChain_Images.size());
+
+    for (size_t i = 0; i < m_SwapChain_Images.size(); i++)
+    {
+        VkComponentMapping components = {
+            .r = VK_COMPONENT_SWIZZLE_IDENTITY,
+            .g = VK_COMPONENT_SWIZZLE_IDENTITY,
+            .b = VK_COMPONENT_SWIZZLE_IDENTITY,
+            .a = VK_COMPONENT_SWIZZLE_IDENTITY,
+        };
+
+        VkImageSubresourceRange imageSubResourceRange = {
+            .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+            .baseMipLevel = 0,
+            .levelCount = 1,
+            .baseArrayLayer = 0,
+            .layerCount = 1,
+        };
+
+        VkImageViewCreateInfo IVcreateInfo = {
+            .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+            .image = m_SwapChain_Images[i],
+            .viewType = VK_IMAGE_VIEW_TYPE_2D,
+            .format = m_SwapChain_Image_Format,
+            .components = components,
+            .subresourceRange = imageSubResourceRange,
+
+        };
+
+        return vkCreateImageView(m_Device, &IVcreateInfo, nullptr, &m_SwapChain_Image_Views[i]);
+    }
+}
 
 V::V(std::string app_name, bool isValidationOn, SDL_Window *window)
 {
@@ -321,6 +363,7 @@ V::V(std::string app_name, bool isValidationOn, SDL_Window *window)
             exit(1);
         }
         std::cout << "[VULKAN INFO]: Created debug messenger!\n";
+
         if (&m_DebugMessenger == nullptr)
         {
             std::cout << "[VULKAN INFO]: m_DebugMessenger still is nullptr!\n";
@@ -354,6 +397,7 @@ V::V(std::string app_name, bool isValidationOn, SDL_Window *window)
     }
     std::println("[VULKAN INFO]: Successfully create vulkan rendering surface to the window.");
 
+    // "Pick" the Physical Device.
     std::string error = ErrorOfPhysicalDeviceCreation(m_DeviceExtensions,
                                                       m_Surface);
     if (error != "")
@@ -377,6 +421,7 @@ V::V(std::string app_name, bool isValidationOn, SDL_Window *window)
     vkGetDeviceQueue(m_Device, indices.m_GraphicsFamily.value(), 0, &m_GraphicsQueue);
     vkGetDeviceQueue(m_Device, indices.m_PresentFamily.value(), 0, &m_PresentQueue);
 
+    // Criação da swapChain.
     int32_t width, height;
     if (!SDL_GetWindowSize(window, &width, &height))
     {
@@ -387,12 +432,12 @@ V::V(std::string app_name, bool isValidationOn, SDL_Window *window)
 
     SDL_assert(width && height && "Width and height are null.\n");
 
-    // Seleciona o formato do SwapChain.
+    // Select the SwapChain format.
     VkSurfaceFormatKHR surfaceFormat = SC_SupportDetails.ChooseSurfaceCapabilities();
 
     VkExtent2D extent = SC_SupportDetails.ChooseExtent2D(width, height);
 
-    // Resultado da criação e imageCount
+    // Result of SwapChain creation and the image count (refresh rate?) variable.
     std::pair<VkResult, uint32_t> ResultPair = CreateSwapChain(&SC_SupportDetails, surfaceFormat, extent, &indices);
     if (ResultPair.first != VK_SUCCESS)
     {
@@ -407,10 +452,26 @@ V::V(std::string app_name, bool isValidationOn, SDL_Window *window)
 
     m_SwapChain_Image_Format = surfaceFormat.format;
     m_SwapChain_Extent = extent;
+
+    std::println("[VULKAN INFO]: Succeded to create SwapChain.");
+
+    if (CreateimageViews() != VK_SUCCESS)
+    {
+        std::cerr << "Failed to create image views.\n";
+        exit(1);
+    }
+    std::println("[VULKAN INFO]: Succeded to create Image Views.");
+
+    
 };
 
 V::~V()
 {
+    for (auto imageView : m_SwapChain_Image_Views)
+    {
+        vkDestroyImageView(m_Device, imageView, nullptr);
+    }
+    vkDestroySwapchainKHR(m_Device, m_SwapChain, nullptr);
     SDL_Vulkan_DestroySurface(m_Vulkan_Instance, m_Surface, nullptr);
     // vkDestroySurfaceKHR(m_Vulkan_Instance, m_Surface, nullptr);
     vkDestroyDevice(m_Device, nullptr);

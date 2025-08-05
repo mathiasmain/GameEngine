@@ -8,8 +8,7 @@
 
 #define DEBUG false
 
-// Função baseada em:
-// https://github.com/stevelittlefish/c_vulkan_sdl3/blob/main/src/main.c
+
 
 std::expected<int, std::string> Divide(int a, int b)
 {

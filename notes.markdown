@@ -1,15 +1,3 @@
-# How to run
-
-``` c++
-mkdir build
-cd build
-cmake .. -DSDL_STATIC=ON -DSDL_SHARED=OFF
-cmake --build .
-```
-
-You will need Vulkan installed and the SDL3 and glm git repositories in thirdparty.
-
-Tested in Windows 11.
 
 // https://vulkan-tutorial.com/en/Drawing_a_triangle/Presentation/Swap_chain
     

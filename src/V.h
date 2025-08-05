@@ -146,13 +146,7 @@ struct SwapChainSupportDetails
     }
 };
 
-// Café, Frutas, Suco de Laranja (não serão mais expertados aos EUA).
-// Produtos que apresentam vanjagem comercial nas exportações:
-//      Petróleo Cru, Soja e alimentos derivados, Minério de ferro, Milho, Açucar bruto.
 
-// Produto que o Brasil produz.
-// Produto que o Brasil majoritariamente importa.
-// Eletrônicos que o Brasil importa
 
 class V
 {
@@ -170,6 +164,7 @@ public:
     std::vector<VkImage> m_SwapChain_Images;
     VkFormat m_SwapChain_Image_Format;
     VkExtent2D m_SwapChain_Extent;
+    std::vector<VkImageView> m_SwapChain_Image_Views;
 
     const std::vector<const char *> m_DeviceExtensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
     std::vector<const char *> m_ValidationLayers = {"VK_LAYER_KHRONOS_validation"};
@@ -189,7 +184,10 @@ public:
     std::pair<VkResult, uint32_t> CreateSwapChain(SwapChainSupportDetails *SC_Support_Details,
                                                   VkSurfaceFormatKHR surfaceFormat,
                                                   VkExtent2D extent, QueueFamilyIndices *indices);
+    VkResult CreateimageViews();
 
+    // Next functions will be used in the main file.
+    void createGraphicsPipeline();
     V(std::string app_name, bool isValidationOn, SDL_Window *window);
     ~V();
 };

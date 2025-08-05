@@ -85,5 +85,6 @@
         "cinttypes": "cpp",
         "variant": "cpp"
     },
-    "C_Cpp.default.compilerPath": "D:/Programas/msys2/ucrt64/bin/g++.exe"
+    "C_Cpp.default.compilerPath": "D:/Programas/msys2/ucrt64/bin/g++.exe",
+    "idf.pythonInstallPath": "D:\\Programas\\Espressif\\Tools\\tools\\idf-python\\3.11.2\\python.exe"
 }
